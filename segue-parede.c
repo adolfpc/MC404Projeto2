@@ -26,7 +26,7 @@ int _start(){
 }
 
 // Funcao que forca o robo a andar paralelamente a parede de tal forma que
-// esta fique sempre a direita (referencia da atividade 8) do robo
+// esta fique sempre a direita (referencia da atividade 8) do
 void segue_parede(motor_cfg_t *m1, motor_cfg_t *m2){
 
     int average = 0;
