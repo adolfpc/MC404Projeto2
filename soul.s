@@ -1,3 +1,7 @@
+@ Trabalho 2 - Sistema de software do Uóli
+@ Adolf Pereira da Costa - RA164933 - Engenharia de Computação - Unicamp
+@ Marcelo Martins Vilela Filho - RA202619 - Engenharia de Computação - Unicamp
+
 @ Este arquivo é um modelo para atividade 9/Trabalho 2
 @ Você pode utilizar todo/qualquer trecho deste arquivo
 @
