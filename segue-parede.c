@@ -107,7 +107,7 @@ void busca_parede(motor_cfg_t *m1, motor_cfg_t *m2){
     }
 
     //Loop que quando uma parede eh encontrada, o robo gira ate que esta fique paralela
-    //ao seu lado direito teste merge
+    //ao seu lado direito
 	while(1){
     	while(read_sonar(7) > LIMIAR_PARALELO && read_sonar(8) > LIMIAR_PARALELO){
             m1->speed = 0;
