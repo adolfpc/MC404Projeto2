@@ -1,3 +1,7 @@
+// Trabalho 2 - Sistema de software do Uóli
+// Adolf Pereira da Costa - RA164933 - Engenharia de Computação - Unicamp
+// Marcelo Martins Vilela Filho - RA202619 - Engenharia de Computação - Unicamp
+
 #include "api_robot.h"
 #define WARNING_UPPER 1000
 #define WARNING_BOUND 800
@@ -26,7 +30,7 @@ int _start(){
 }
 
 // Funcao que forca o robo a andar paralelamente a parede de tal forma que
-// esta fique sempre a direita (referencia da atividade 8) do
+// esta fique sempre a direita (referencia da atividade 8) do robô
 void segue_parede(motor_cfg_t *m1, motor_cfg_t *m2){
 
     int average = 0;
