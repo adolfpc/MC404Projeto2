@@ -86,7 +86,7 @@ void segue_parede(motor_cfg_t *m1, motor_cfg_t *m2){
 
 }
 //Funcao que inicializa o robo e em seguida busca uma parede
-//conforme a aproximação da parede ocorre o robo para e gira até que essa parede 
+//conforme a aproximação da parede ocorre o robo para e gira até que essa parede
 //fique a sua direita
 void busca_parede(motor_cfg_t *m1, motor_cfg_t *m2){
 	//Loop que faz o robo andar para frente ate que uma parede seja encontrada
@@ -105,8 +105,8 @@ void busca_parede(motor_cfg_t *m1, motor_cfg_t *m2){
         set_motor_speed(m2);
         break;
     }
-    //Loop que quando uma parede eh encontrada, o robo gira ate que esta fique paralela 
-    //ao seu lado direito
+    //Loop que quando uma parede eh encontrada, o robo gira ate que esta fique paralela
+    //ao seu lado direito juliao fudido
 	while(1){
     	while(read_sonar(7) > LIMIAR_PARALELO && read_sonar(8) > LIMIAR_PARALELO){
             m1->speed = 0;
