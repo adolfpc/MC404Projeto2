@@ -20,7 +20,7 @@ CC_FLAGS=-g
 LD=arm-eabi-ld
 LD_FLAGS=-g
 
-USER_PRG=segue-parede.o
+USER_PRG=ronda.o
 
 # ----------------------------------
 # Default rule
