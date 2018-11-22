@@ -1,6 +1,6 @@
-// Trabalho 2 - Sistema de software do Uóli
-// Adolf Pereira da Costa - RA164933 - Engenharia de Computação - Unicamp
-// Marcelo Martins Vilela Filho - RA202619 - Engenharia de Computação - Unicamp
+@ Trabalho 2 - Sistema de software do Uóli
+@ Adolf Pereira da Costa - RA164933 - Engenharia de Computação - Unicamp
+@ Marcelo Martins Vilela Filho - RA202619 - Engenharia de Computação - Unicamp
 
 .global set_motor_speed
 .global read_sonar
@@ -67,6 +67,6 @@ get_time:
     push {r7, lr}
 
     mov r7, #17 @ Coloca em r7 o numero da syscall(definida no enunciado)
-    svc 0x0a
+    svc 0x0
 
     pop {r7, pc}
