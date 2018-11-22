@@ -27,7 +27,7 @@ int _start(){
     set_motor_speed(&m2);
 
     //Inicializa variáveis de controle de distâncias
-    LIMIAR_DE_BUSCA = 350;
+    LIMIAR_DE_BUSCA = 480;
     LIMIAR_PARALELO = 550;
 
     busca_parede(&m1, &m2);
@@ -76,7 +76,7 @@ void segue_parede(motor_cfg_t *m1, motor_cfg_t *m2){
             //Faz o controle dinamico de velocidade (quando se aproxima da parede),
             //fazendo com que o robô na se afaste da parede.
             if(s7 - s7_2 < 0){
-                higher_speed=6;
+                higher_speed=5;
                 slower_speed=2;
             }else{
                 higher_speed=4;
@@ -105,8 +105,8 @@ void busca_parede(motor_cfg_t *m1, motor_cfg_t *m2){
     while(1){
         // Anda para frente até encontrar a parede.
         while((read_sonar(3) > LIMIAR_DE_BUSCA && read_sonar(4) > LIMIAR_DE_BUSCA)){
-            m1->speed = 10;
-            m2->speed = 10;
+            m1->speed = 20;
+            m2->speed = 20;
             set_motor_speed(m1);
             set_motor_speed(m2);
         }
