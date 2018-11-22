@@ -62,7 +62,7 @@ void segue_parede(motor_cfg_t *m1, motor_cfg_t *m2){
         s7 = read_sonar(7);
         //Se a distancia do sensor 8 for maior que o sensor 7
     	//Se afasta da parede girando no sentido anti-horario
-        if(read_sonar(8) > s7{
+        if(read_sonar(8) > s7){
             m1->speed = 4;
             m2->speed = 1;
             set_motor_speed(m1);
@@ -95,6 +95,7 @@ void segue_parede(motor_cfg_t *m1, motor_cfg_t *m2){
     }
 
 }
+
 //Funcao que inicializa o robo e em seguida busca uma parede
 //conforme a aproximação da parede ocorre o robo para e gira até que essa parede
 //fique a sua direita
