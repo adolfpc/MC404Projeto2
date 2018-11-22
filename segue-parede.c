@@ -27,8 +27,8 @@ int _start(){
     set_motor_speed(&m2);
 
     //Inicializa variáveis de controle de distâncias
-    LIMIAR_DE_BUSCA = 480;
-    LIMIAR_PARALELO = 550;
+    LIMIAR_DE_BUSCA = 420;
+    LIMIAR_PARALELO = 650;
 
     busca_parede(&m1, &m2);
     segue_parede(&m1, &m2);
@@ -99,16 +99,16 @@ void segue_parede(motor_cfg_t *m1, motor_cfg_t *m2){
 //Funcao que inicializa o robo e em seguida busca uma parede
 //conforme a aproximação da parede ocorre o robo para e gira até que essa parede
 //fique a sua direita
-void busca_parede(motor_cfg_t *m1, motor_cfg_t *m2){
-
+void busca_parede(motor_cfg_t *m1, motor_cfg_t *m2){	
 	//Loop que faz o robo andar para frente ate que uma parede seja encontrada
     while(1){
         // Anda para frente até encontrar a parede.
         while((read_sonar(3) > LIMIAR_DE_BUSCA && read_sonar(4) > LIMIAR_DE_BUSCA)){
-            m1->speed = 20;
-            m2->speed = 20;
-            set_motor_speed(m1);
+            m1->speed = 14;
+            m2->speed = 14;
+            set_motor_speed(m1);            
             set_motor_speed(m2);
+
         }
         //Depois de encontrada para.
         m1->id = 0;

@@ -14,8 +14,8 @@ int _start(){
     m1.id = 0;
     m2.id = 1;
 
-    // Variavel barrier: implementa a lógica do robó para sempre andar mais tempo de sistema.
-    //É uma variavel de controle.
+    // Variavel barrier: implementa a logica do robo para sempre andar mais tempo de sistema.
+    // E uma variavel de controle.
     int barrier = 1;
 
     while(1){

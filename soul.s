@@ -286,7 +286,7 @@ read_sonar:
     str r4, [r3]
 
     @delay
-    mov r4, #10
+    mov r4, #5
     wait:
         cmp r4, #0
         sub r4, r4, #1
@@ -299,7 +299,7 @@ read_sonar:
     str r4, [r3]
 
     @delay
-    mov r4, #10
+    mov r4, #5
     wait2:
         cmp r4, #0
         sub r4, r4, #1
@@ -320,7 +320,7 @@ read_sonar:
         cmp r4, #1
         beq read_sonar_data
         @delay
-        mov r4, #10
+        mov r4, #5
         wait3:
             cmp r4, #0
             sub r4, r4, #1
