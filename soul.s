@@ -238,9 +238,9 @@ TZIC_CONFIG:
 
 
 
-@   Rotina para o tratamento de chamadas de sistemas, feitas pelo usuário
-@   As funções na camada BiCo fazem syscalls que são tratadas por essa rotina
-@   Esta rotina deve, determinar qual syscall foi realizada e realizar alguma ação (escrever nos motores, ler contador de tempo, ....)
+@  Rotina para o tratamento de chamadas de sistemas, feitas pelo usuário
+@  As funções na camada BiCo fazem syscalls que são tratadas por essa rotina
+@  Esta rotina deve, determinar qual syscall foi realizada e realizar alguma ação (escrever nos motores, ler contador de tempo, ....)
 svc_handler:
     push {r1-r12, lr}
 
@@ -262,22 +262,33 @@ svc_handler:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@           Chamadas de sistema              @@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+@ Funcao utilizada na leitura de dados dos sonares (distancia dele a parede)
+@ Utiliza mascara de bits para setar a flag, trigger e sonar_mux
+@ Recebe em r0 o identificador do sonar a ser lido e, se for valido (id entre 0 e 15)
+@ Retorna -1 caso o id seja invalido, caso contrario retorna em r0 a distancia obtida
 read_sonar:
+	@ Salva o contexto dos registradores
     push {r1-r12}
 
+    @ Verifica possiveis erros caso o id do sonar esteja fora do intervalo correto
     cmp r0, #15
     bgt read_sonar_err
     cmp r0, #0
     blt read_sonar_err
 
+    @ Zera o sonar_mux utilizando o operador logico 'and' com a mascara em r12
     ldr r2, =DR
     ldr r4, [r2]
     ldr r12, =0b11111111111111111111111111000001
     and r4, r4, r12
+
+    @ Faz um operador logico 'or' para que coloque o id do sonar nos pinos do sonar mux (sonar id -> sonar_mux)
     orr r4, r4, r0, lsl #2
     ldr r3, =DR
     str r4, [r3]
 
+    @ Faz um operador logico 'and' para zerar o pino referente ao trigger e flag do GPIO
     ldr r2, =DR
     ldr r4, [r2]
     ldr r12, =0b11111111111111111111111111111100
@@ -285,26 +296,28 @@ read_sonar:
     ldr r3, =DR
     str r4, [r3]
 
-    @delay
+    @ aplica um delay apos zerar o trigger do GPIO
     mov r4, #5
     wait:
         cmp r4, #0
         sub r4, r4, #1
         bgt wait
 
-    ldr r2, =DR
+    @ Faz um operador logico 'or' para setar o pino referente ao trigger e flag do GPIO
+	ldr r2, =DR
     ldr r4, [r2]
     orr r4, r4, #0b10
     ldr r3, =DR
     str r4, [r3]
 
-    @delay
+    @ aplica um delay apos setar o trigger do GPIO
     mov r4, #5
     wait2:
         cmp r4, #0
         sub r4, r4, #1
         bgt wait2
 
+    @ Faz um operador logico 'and' para zerar o pino referente ao trigger e flag do GPIO
     ldr r2, =DR
     ldr r4, [r2]
     ldr r12, =0b11111111111111111111111111111100
@@ -312,6 +325,8 @@ read_sonar:
     ldr r3, =DR
     str r4, [r3]
 
+    @ loop que aguarda ate que o valor logico da flag no GPIO se torne 1
+    @ Apos se tornar 1 pula para a rotina que le o valor de distancia apontado pelo sonar
     wait_flag:
         ldr r2, =DR
         ldr r4, [r2]
@@ -319,14 +334,14 @@ read_sonar:
 
         cmp r4, #1
         beq read_sonar_data
-        @delay
+        @ aplica delay entre a verificacao do valor logico 0 da flag e o retorno ao loop para reiniciar o processo
         mov r4, #5
         wait3:
             cmp r4, #0
             sub r4, r4, #1
             bgt wait3
         b wait_flag
-
+    @ rotina que poe em r0 o valor referente a distancia e retorna
     read_sonar_data:
         ldr r2, =DR
         ldr r4, [r2]
@@ -334,19 +349,26 @@ read_sonar:
         and r4, r4, r12
         lsr r4, r4, #6
         mov r0, r4
-
+    @ retoma o contexto inicial e retorna
     pop {r1-r12}
     b turn_back
 
+@ funcao que retorna -1 caso o intervalo de id do sonar a ser lido seja invalido
 read_sonar_err:
     mov r0, #-1
     b turn_back
 
-@ motor 0 -> direita, motor 1 -> esquerda(em relação a imagem do lab08)
+
+@ funcao que recebe em r0 o id (0 ou 1) do motor cuja velocidade se deseja alterar
+@ A referencia utiliza foi a mesma dada na atividade 8, ou seja, o motor de id 0 se encontra a direita do robo,
+@ enquanto o motor de id 1 se encontra a esquerda. Anterior a qualquer mudanca na velocidade dos motores, estas sao setadas em 0
+@ para depois serem alteradas de acordo com o parametro, que e recebido em r1 na chamada da funcao.
+@ retorna -1 caso o id do motor esteja fora do intervalo e -2 caso a velocidade esteja fora do intervalo possivel (0 a 63)
 set_motor_speed:
+	@ Salva o contexto
     push {r1-r12, lr}
 
-    @ Verifica possiveis erros nos parametros
+    @ Verifica possiveis erros nos parametros e chama tratamento caso necessario
     cmp r0, #0
     blt motor_id_err
     cmp r0, #1
@@ -356,22 +378,22 @@ set_motor_speed:
     cmp r1, #63
     bgt speed_id_err
 
-
+    @ Se for o motor de id 0, pula para a rotina referente ao motor 1
     cmp r0, #0
     bne motor1
-
-    @ Reseta as velocidades para 0, antes de fazer o set
+    @ Caso nao seja o motor 1 so e possivel que seja o motor de id 0, ja que possiveis erros ja foram verificados
+    @ Reseta as velocidades para 0 e desliga o motor, antes de fazer o set da velocidade desejada e passada em r1
     ldr r2, =DR
     ldr r4, [r2]
     ldr r12, =0b11111110000000111111111111111111
     and r4, r4, r12
 
-    @ velocidade do motor 0
+    @ Seta a velocidade desejada nos pinos adequados do GPIO
     lsl r1, r1, #19
     orr r4, r4, r1
     str r4, [r2]
 
-    @ seta motor0 pra 0
+    @ Liga o motor
     ldr r2, =DR
     ldr r4, [r2]
     ldr r12, =0b11111111111110111111111111111111
@@ -380,17 +402,17 @@ set_motor_speed:
 
     b end
 
-    @ Reseta as velocidades para 0, antes de fazer o set
+    @ Rotina utilizada no motor 1 que segue os mesmos passos logicos aplicados no motor 0 para alterar velocidade
     motor1:
     ldr r2, =DR
     ldr r4, [r2]
     ldr r12, =0b00000001111111111111111111111111
     and r4, r4, r12
-    @ velocidade do motor 1
+    @ seta velocidade
     lsl r1, r1, #26
     orr r4, r4, r1
     str r4, [r2]
-    @seta o motor1 para 0
+    @ liga o motor1
     ldr r2, =DR
     ldr r4, [r2]
     ldr r12, =0b11111101111111111111111111111111
@@ -401,15 +423,17 @@ set_motor_speed:
     pop {r1-r12, lr}
     b turn_back
 
-
+@ retorna -1 caso o id do motor esteja fora do intervalo
 motor_id_err:
     mov r0, #-1
     b turn_back
-
+@ retorna -2 caso a velocidade do motor esteja fora do intervalo
 speed_id_err:
     mov r0, #-2
     b turn_back
 
+@ Funcao que seta o tempo de sistema
+@ recebe em r0 o valor a ser aplicado
 set_time:
     push {r1-r12, lr}
     ldr r12, =counter
@@ -417,6 +441,8 @@ set_time:
     pop {r1-r12, lr}
     b turn_back
 
+@ Funcao que retorna o tempo de sistema atual
+@ retorna em r0 o valor encontrado
 get_time:
     push {r1-r12, lr}
     ldr r0, =counter
@@ -424,6 +450,7 @@ get_time:
     pop {r1-r12, lr}
     b turn_back
 
+@ rotina para retornar apos chamar uma funcao
 turn_back:
     mov pc, lr
 

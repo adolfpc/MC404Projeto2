@@ -22,8 +22,8 @@ int _start(){
 
         // Faz o robo andar para frente enquanto o tempo é menor que nossa variavel de controle(barrrier).
         while(get_time() < barrier){
-            m1.speed = 8;
-            m2.speed = 8;
+            m1.speed = 14;
+            m2.speed = 14;
 
             // Caso encontre uma parede no meio do processo de andar para frente
             if(read_sonar(4) < LIMIAR_EVITA_PAREDE || read_sonar(3) < LIMIAR_EVITA_PAREDE){
